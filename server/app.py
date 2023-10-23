@@ -3,6 +3,7 @@ import socket
 from threading import Thread, Event
 import signal
 import os
+import json
 
 service = None
 server = None
@@ -44,13 +45,12 @@ def handle_connection(client_socket):
     method, path, _ = request.split(' ', 2)
 
     # check if the request is valid
-    if method != 'GET':
-        response = 'HTTP/1.1 405 Method Not Allowed\n\n'
-    elif path != '/':
-        response = 'HTTP/1.1 404 Not Found\n\n'
-    else:
-        # send a valid HTTP response
+    if path == '/' and method == 'GET':
         response = 'HTTP/1.1 200 OK\nContent-Type: text/html\n\nHello World!!!!'
+    elif path == '/new-service' and method == 'POST':
+        handle_service(request)
+    else:
+        response = 'HTTP/1.1 404 Not Found\n\n'
 
     # send the HTTP response to the client
     client_socket.send(response.encode('utf-8'))
@@ -63,7 +63,10 @@ def handle_client(cliente_socket):
     pass
 
 def handle_service(data):
-    # autorize service connection and set it as the service
+    data = data.decode('utf-8')
+    # get password from http data
+    # packet example: 'POST /new-service HTTP/1.1\r\
+    password = data.split('password=')[1].split('&')[0]
     pass
 
 if __name__ == '__main__':

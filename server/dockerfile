@@ -6,4 +6,4 @@ COPY app.py ./
 
 CMD ["python", "app.py"]
 
-EXPOSE 80
+EXPOSE 443
