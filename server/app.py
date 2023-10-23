@@ -46,28 +46,39 @@ def handle_connection(client_socket):
 
     # check if the request is valid
     if path == '/' and method == 'GET':
-        response = 'HTTP/1.1 200 OK\nContent-Type: text/html\n\nHello World!!!!'
+        handle_client(client_socket)
     elif path == '/new-service' and method == 'POST':
-        handle_service(request)
+        handle_service(request, client_socket)
     else:
         response = 'HTTP/1.1 404 Not Found\n\n'
 
     # send the HTTP response to the client
-    client_socket.send(response.encode('utf-8'))
-    print('HTTP response sent to client:', response)
-    client_socket.close()
+    
+    
+    
     
 
-def handle_client(cliente_socket):
+def handle_client(socket):
     # handle the cleint request from browser, foward request and return the response from service to the client, then closes
-    pass
+    response = 'HTTP/1.1 200 OK\n\ncontent-type: text/html\n\n <h1> Hello World! </h1>'
+    socket.send(response.encode('utf-8'))
+    socket.close()
 
-def handle_service(data):
+def handle_service(data, socket):
+    global service
+
     data = data.decode('utf-8')
     # get password from http data
     # packet example: 'POST /new-service HTTP/1.1\r\
     password = data.split('password=')[1].split('&')[0]
-    pass
+    if password == os.getenv('PASSWORD'):
+        service = socket
+        socket.send('HTTP/1.1 200 OK Service updated.\n\n'.encode('utf-8'))
+    else:
+        socket.send('HTTP/1.1 401 Unauthorized\n\n'.encode('utf-8'))
+        socket.close()
+
+        
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, handle_close)
