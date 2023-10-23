@@ -11,10 +11,10 @@ def main():
     global server
 
     host = '0.0.0.0'
-    porta = os.getenv('PORT', default=5000)
+    port = os.getenv('PORT', default=80)
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((host, porta))
+    server.bind((host, port))
     server.listen(os.getenv('MAX_CONNECTIONS', default=5))
 
     print(f"Servidor Socket escutando em {host}:{porta}")
