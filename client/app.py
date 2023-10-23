@@ -1,6 +1,6 @@
 import socket
 
-host = 'www.veecks-rt.zeabur.app'
+host = 'veecks-rt.zeabur.app'
 port = 443
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
