@@ -17,7 +17,7 @@ def main():
     server.bind((host, int(port)))
     server.listen(os.getenv('MAX_CONNECTIONS', default=5))
 
-    print(f"Servidor Socket escutando em {host}:{porta}")
+    print(f"Servidor Socket escutando em {host}:{port}")
     print(f"Para encerrar o servidor aperte ctrl+c")
 
     while True:
