@@ -26,11 +26,17 @@ if data['status'] == 0:
             service.connect((service_ip, service_port))
             data = client.recv(1024).decode('utf-8')
             print('New request from client')
+            print(data, '\n\n')
             # make a request to local service
             service.send(data.encode('utf-8'))
             response = service.recv(1024)
+            if not response:
+                response = '''HTTP/1.1 503 Service Unavailable
+                Retry-After: 1  # O navegador deve tentar novamente após 30 segundos
+                Content-Type: text/html'''.encode('utf-8')
             client.send(response)
             print('Response sent to client')
+            print(response, '\n\n\n\n')
 else:
     print('Error connecting to server.')
     print(data['message'])

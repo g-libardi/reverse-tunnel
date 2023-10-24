@@ -67,6 +67,7 @@ def handle_client(data, socket):
         print('Response received from service')
         socket.send(response)
         print('Response sent to client')
+        print(response, '\n\n\n\n')
     finally:
         socket.close()
 
