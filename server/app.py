@@ -1,5 +1,5 @@
 import flask
-from flask import request, jsonify
+from flask import request, Response, jsonify
 from flask_socketio import SocketIO
 import os
 
@@ -9,13 +9,47 @@ sio = SocketIO(app, cors_allowed_origins="*")
 
 service = None
 
-@app.route('/', methods=['GET'])
-def home():
-    data = request.args
-    print(f'GET request received: {request}')
-    res = sio.call('message', {'data': data}, to=service)
-    print(f'\n\n received: {res} \n\n')
-    return res
+@app.route('/', methods=['GET','POST','DELETE'])
+def home(path = '/'):
+    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+    response = None
+
+    if request.method=='GET':
+        resp = sio.call('message', {'method': 'GET', 'path': path}, to=service)
+        headers = [(name, value) for (name, value) in  resp[2].items() if name.lower() not in excluded_headers]
+        response = Response(resp[0], resp[1], headers)
+        
+    elif request.method=='POST':
+        resp = sio.call('message', {'method': 'POST', 'path': path, 'json': request.get_json}, to=service)
+        headers = [(name, value) for (name, value) in resp[2].items() if name.lower() not in excluded_headers]
+        response = Response(resp[0], resp[1], headers)
+        
+    elif request.method=='DELETE':
+        resp = sio.call('message', {'method': 'DELETE', 'path': path}, to=service)
+        response = Response(*resp)
+    
+    return response
+
+@app.route('/<path:path>', methods=['GET','POST','DELETE'])
+def proxy(path):
+    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+    response = None
+
+    if request.method=='GET':
+        resp = sio.call('message', {'method': 'GET', 'path': path}, to=service)
+        headers = [(name, value) for (name, value) in  resp.raw.headers.items() if name.lower() not in excluded_headers]
+        response = Response(resp.content, resp.status_code, headers)
+        
+    elif request.method=='POST':
+        resp = sio.call('message', {'method': 'POST', 'path': path, 'json': request.get_json}, to=service)
+        headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+        response = Response(resp.content, resp.status_code, headers)
+        
+    elif request.method=='DELETE':
+        resp = sio.call('message', {'method': 'DELETE', 'path': path}, to=service)
+        response = Response(resp.content, resp.status_code, headers)
+    
+    return response
 
 @sio.on('connect')
 def on_connect(auth):
