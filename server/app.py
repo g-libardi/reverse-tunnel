@@ -53,7 +53,7 @@ def handle_service(data, socket):
 
     username = data.split('username=')[1].split('&')[0]
     password = data.split('password=')[1].split('&')[0]
-    if username == os.getenv('USERNAME') and password == os.getenv('PASSWORD'):
+    if username == os.getenv('USERNAME', 'admin') and password == os.getenv('PASSWORD', 'admin'):
         service = socket
         response = json.dumps({
             'status': 0,
