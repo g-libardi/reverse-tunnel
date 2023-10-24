@@ -4,10 +4,12 @@ import json
 service_ip = '0.0.0.0'
 service_port = 50135
 
-host = '0.0.0.0'
+host = '54.94.45.183'
 port = 5000
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+client.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
 client.connect((host, port))
 
 username = input('username: ')

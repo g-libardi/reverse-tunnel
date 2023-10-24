@@ -18,6 +18,7 @@ def main():
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
     server.bind((host, int(port)))
     server.listen(os.getenv('MAX_CONNECTIONS', default=5))
 
