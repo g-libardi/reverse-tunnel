@@ -10,8 +10,8 @@ sio = SocketIO(app, cors_allowed_origins="*")
 service = None
 
 
-@app.route('/', methods=['GET','POST','DELETE'], defaults={'path': ''})
-@app.route('/<path:path>', methods=['GET','POST','DELETE'])
+@app.route('/', methods=['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'], defaults={'path': ''})
+@app.route('/<path:path>', methods=['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'])
 def proxy(path):
     if not service:
         return jsonify({'error': 'Service not connected to proxy'}), 503
