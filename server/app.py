@@ -71,6 +71,7 @@ def handle_service(data, socket):
 def handle_close(sig, frame):
     global server
     if server:
+        server.shutdown(socket.SHUT_RDWR)
         server.close()
     print("\nServer closed.")
     exit(0)
