@@ -33,12 +33,16 @@ def on_connect(auth):
         print(f'Service connected. id: {request.sid}')
         service = request.sid
     else:
-        print('Service tried to connect with wrong credentials')
+        print('A service tried to connect with wrong credentials')
         sio.disconnect()
 
 @sio.on('disconnect')
 def on_disconnect():
-    print('Service disconnected')
+    global service
+    print(f'{request.sid} disconnected')
+    if service == request.sid:
+        service = None
+        print('Service disassociated')
 
 
 if __name__ == '__main__':
