@@ -18,6 +18,7 @@ def proxy(path):
     excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
 
     req_headers = {name: value for (name, value) in request.headers if name.lower() not in excluded_headers}
+    req_headers['X-Forwarded-For'] = f'''{request.remote_addr},{req_headers.get('X-Forwarded-For', '')}'''
     resp = sio.call('message', {'method': request.method, 'path': path, 'data': request.get_data(), 'headers': req_headers}, to=service)
     headers = [(name, value) for (name, value) in  resp[2].items() if name.lower() not in excluded_headers]
     
