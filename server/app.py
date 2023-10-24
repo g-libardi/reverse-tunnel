@@ -2,6 +2,7 @@ import flask
 from flask import request, Response, jsonify
 from flask_socketio import SocketIO
 import os
+import sys
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -48,4 +49,10 @@ def on_disconnect():
 
 
 if __name__ == '__main__':
+    args = sys.argv[1:]
+    if len(args) == 1:
+        port = int(args[0])
+    elif len(args) == 0:
+        port = os.getenv('PORT', 5000)
+
     sio.run(app, host='0.0.0.0', port=os.getenv('PORT', 5000))
