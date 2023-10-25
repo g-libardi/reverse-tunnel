@@ -1,5 +1,6 @@
 import socketio
 import requests
+import sys
 
 service_address = ''
 server_address = ''
@@ -23,8 +24,13 @@ def on_message(data):
     return res.content, res.status_code, dict(res.headers)
 
 if __name__ == '__main__':
-    server_address = input('Server address(https://example.com): ')
-    service_address = input('Service address(http://example.com): ')
+    args = sys.argv[1:]
+    if len(args) == 2:
+        server_address = args[0]
+        server_address = args[1]
+    else:
+        server_address = input('Server address(https://example.com): ')
+        service_address = input('Service address(http://example.com): ')
 
     auth = {'username': input('username: '),
             'password': input('password: ')}
