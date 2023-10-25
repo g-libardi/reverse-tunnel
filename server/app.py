@@ -10,9 +10,22 @@ sio = SocketIO(app, cors_allowed_origins="*")
 
 service = None
 
+@app.route('/', methods=['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'], defaults={'path': ''})
+def index(path):
+    if not service:
+        return jsonify({'error': 'Service not connected to proxy'}), 503
+    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+
+    req_headers = {name: value for (name, value) in request.headers if name.lower() not in excluded_headers}
+    req_headers['X-Forwarded-For'] = f'''{request.remote_addr},{req_headers.get('X-Forwarded-For', '')}'''
+    resp = sio.call('message', {'method': request.method, 'path': path, 'data': request.get_data(), 'headers': req_headers}, to=service)
+    headers = [(name, value) for (name, value) in  resp[2].items() if name.lower() not in excluded_headers]
+    
+    response = Response(resp[0], resp[1], headers)
+    
+    return response
 
 @app.route('/<path:path>', methods=['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'])
-@app.route('/', methods=['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'], defaults={'path': ''})
 def proxy(path):
     if not service:
         return jsonify({'error': 'Service not connected to proxy'}), 503
