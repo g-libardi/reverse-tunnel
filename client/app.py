@@ -20,7 +20,7 @@ def on_message(data):
     # redirect message to local service
     print('message received with ', data)
     
-    res = requests.request(data['method'], service_address + data['path'], data=data['data'], headers=data['headers'])
+    res = requests.request(data['method'], service_address + '/' + data['path'], data=data['data'], headers=data['headers'])
     return res.content, res.status_code, dict(res.headers)
 
 if __name__ == '__main__':
