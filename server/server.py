@@ -19,7 +19,7 @@ class GUnicornFlaskApplication(BaseApplication):
 if __name__ == '__main__':
     options = {
         'bind': '0.0.0.0:' + os.getenv('PORT', '5000'),
-        'workers': 4,
+        'workers': 1,
         'worker_class': 'geventwebsocket.gunicorn.workers.GeventWebSocketWorker'
     }
     GUnicornFlaskApplication(app, options).run()
